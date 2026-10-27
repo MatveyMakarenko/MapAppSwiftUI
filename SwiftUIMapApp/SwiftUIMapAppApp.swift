@@ -6,7 +6,7 @@ struct SwiftUIMapAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            LocationsView()
+            MainTabView()
                 .environment(vm)
         }
     }

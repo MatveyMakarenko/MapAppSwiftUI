@@ -2,8 +2,10 @@ import SwiftUI
 
 struct LocationPreviewView: View {
     @Environment(LocationsViewModels.self) private var vm: LocationsViewModels
+    @State private var offset: CGSize = .zero
     
     let location: Location
+    
     var body: some View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 16) {
@@ -11,29 +13,39 @@ struct LocationPreviewView: View {
                 textSection
             }
 
-            VStack(spacing: 20) {
+            VStack(spacing: 15) {
+                LikeButton
+                    .fontWeight(.light)
+                    .font(.title2)
                 learnMoreButton
                 nextButton
             }
         }
         .padding()
+        .padding(.top, 15)
         .background(RoundedRectangle(cornerRadius: 10)
             .fill(.ultraThinMaterial)
             .offset(y: 65)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .clipped()
         )
+        .offset(x: offset.width, y: 0)
+        .gesture(drag)
     }
         
 }
 
 #Preview {
-    LocationPreviewView(location: LocationsDataService.locations.last!)
+    LocationPreviewView(location: LocationsDataService.locations[1])
         .environment(LocationsViewModels())
         .padding()
 }
 
 extension LocationPreviewView {
+    
+    private var isFavorite: Bool {
+        vm.locations.first(where: { $0.id == location.id })?.isFavorite == true
+    }
     
     private var imageSection: some View {
         ZStack{
@@ -62,6 +74,16 @@ extension LocationPreviewView {
         .padding(4)
     }
     
+    private var LikeButton: some View {
+        Button {
+            vm.toggleFavorite(location: vm.currentLocation)
+        } label: {
+            VStack {
+                Image(systemName: isFavorite ? "star.fill" : "star")
+            }
+        }
+    }
+    
     private var learnMoreButton: some View {
         Button {
             vm.sheetLocation = location
@@ -75,12 +97,32 @@ extension LocationPreviewView {
     
     private var nextButton: some View {
         Button {
-            vm.nextButtonPressed()
+            vm.previousButtonPressed()
         } label: {
             Text("Next")
                 .font(.headline)
                 .frame(width: 125, height: 35)
         }
         .buttonStyle(.bordered)
+    }
+    
+    private var drag: some Gesture {
+        DragGesture()
+            .onChanged({ value in
+                offset = value.translation
+                
+            })
+            .onEnded({ value in
+                withAnimation(.easeInOut) {
+                if value.translation.width < -50 {
+                    vm.nextButtonPressed()
+                }
+                else if value.translation.width > 50{
+                    vm.previousButtonPressed()
+                }
+                    
+                    offset = .zero
+                }
+            })
     }
 }

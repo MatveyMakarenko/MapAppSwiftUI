@@ -32,13 +32,18 @@ struct LocationsView: View {
                     }
             }
         }
-            
     }
 }
 
 #Preview {
-    LocationsView()
-        .environment(LocationsViewModels())
+    let vm = LocationsViewModels()
+
+        if let lastLocation = vm.locations.last {
+            vm.updateNextLocation(location: lastLocation)
+        }
+    
+    return LocationsView()
+        .environment(vm)
 }
 
 extension LocationsView {
@@ -47,6 +52,7 @@ extension LocationsView {
         VStack {
             Button(action: vm.toggleListButton) {
                 Text("\(vm.currentLocation.name), \(vm.currentLocation.cityName)")
+                    .padding(.horizontal, 30)
                     .font(.title3)
                     .fontWeight(.bold)
                     .frame(height: 55)

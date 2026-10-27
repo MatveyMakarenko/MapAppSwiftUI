@@ -58,4 +58,29 @@ class LocationsViewModels {
             
         updateNextLocation(location: locations[nextIndex])
     }
-}
+    
+    func previousButtonPressed() {
+        guard let currentIndex = locations.firstIndex(where: { $0 == currentLocation }) else { return }
+
+        var previousIndex = (currentIndex - 1) % locations.count
+        
+        if previousIndex < 0 {
+            previousIndex = locations.count - 1
+        }
+        print("Текущий индекс: \(currentIndex)")
+        print("Предыдущий индекс: \(previousIndex)")
+        
+            
+        updateNextLocation(location: locations[previousIndex])
+    }
+    
+    func toggleFavorite(location: Location) {
+        withAnimation(.easeInOut) {
+            guard let index = locations.firstIndex(where: {
+                $0.id == location.id
+            }) else { return }
+
+            locations[index].isFavorite.toggle()
+            currentLocation = locations[index]
+        }
+    }}

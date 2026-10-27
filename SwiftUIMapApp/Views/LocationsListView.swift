@@ -40,6 +40,7 @@ extension LocationsListView {
                         .font(.subheadline)
                 
             }
+//                .frame(maxWidth: .infinity, alignment: .leading)
             
         }
         .frame(maxWidth: .infinity, alignment: .leading)

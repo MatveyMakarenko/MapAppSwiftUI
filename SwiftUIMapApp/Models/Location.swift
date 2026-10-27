@@ -14,6 +14,8 @@ struct Location: Identifiable, Equatable {
         name + cityName
     }
     
+    var isFavorite: Bool = false
+    
     static func == (lhs: Location, rhs: Location) -> Bool {
         lhs.id == rhs.id
     }
