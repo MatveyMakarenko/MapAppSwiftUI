@@ -55,6 +55,16 @@ class LocationsDataService {
                 "Novosib-Theatre-2"
             ],
             link: "https://en.wikipedia.org/wiki/Novosibirsk_Opera_and_Ballet_Theatre"),
+        Location(
+            name: "Eiffel Tower",
+            cityName: "Paris",
+            coordinates: CLLocationCoordinate2D(latitude: 48.858056, longitude: 2.294444),
+            description: "The Eiffel Tower is a wrought-iron landmark located in the center of Paris, France. Designed by engineer Gustave Eiffel, it was constructed between 1887 and 1889 as the entrance arch for the 1889 World's Fair, which celebrated the centenary of the French Revolution.",
+            imageNames: [
+                "paris-eiffeltower-1",
+                "paris-eiffeltower-2"
+            ],
+            link: "https://en.wikipedia.org/wiki/Eiffel_Tower"),
     ]
     
 }

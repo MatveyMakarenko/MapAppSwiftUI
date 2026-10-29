@@ -15,30 +15,12 @@ struct LocationsView: View {
                     mapPin(location: location, isSelected: vm.currentLocation == location)
                 }
             }
-            .simultaneousGesture(
-                DragGesture()
-                    .onChanged { _ in
-                        withAnimation(.easeInOut) {
-                            isTabBarCompact = true
-                        }
-                    }
-                    .onEnded { _ in
-                        withAnimation(.easeInOut) {
-                            isTabBarCompact = false
-                        }
-                    }
-            )
+            .simultaneousGesture(hidePreviewView)
             .onTapGesture {
                 withAnimation {
                     isVisible = false
                 }
             }
-            .onTapGesture {
-                withAnimation {
-                    isVisible = false
-                }
-            }
-
             
             VStack(spacing: 0) {
                 header
@@ -72,7 +54,7 @@ struct LocationsView: View {
 }
 
 #Preview {
-    @Previewable @State var isCompete:Bool = false
+    @Previewable @State var isCompete:Bool = true
     LocationsView(isTabBarCompact: $isCompete)
         .environment(LocationsViewModels())
 }
@@ -123,5 +105,19 @@ extension LocationsView {
                     }
                 }
         }
+    }
+    
+    private var hidePreviewView: some Gesture {
+        DragGesture()
+            .onChanged { _ in
+                withAnimation(.easeInOut) {
+                    isTabBarCompact = true
+                }
+            }
+            .onEnded { _ in
+                withAnimation(.easeInOut) {
+                    isTabBarCompact = false
+                }
+            }
     }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LocationsListView: View {
     @Environment(LocationsViewModels.self) private var vm: LocationsViewModels
+    
     var body: some View {
         List {
             ForEach(vm.locations) { location in
@@ -40,7 +41,6 @@ extension LocationsListView {
                         .font(.subheadline)
                 
             }
-//                .frame(maxWidth: .infinity, alignment: .leading)
             
         }
         .frame(maxWidth: .infinity, alignment: .leading)

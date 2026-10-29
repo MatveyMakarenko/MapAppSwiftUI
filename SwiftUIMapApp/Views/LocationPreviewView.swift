@@ -13,7 +13,7 @@ struct LocationPreviewView: View {
                 textSection
             }
 
-            VStack(spacing: 15) {
+            VStack(spacing: 18) {
                 LikeButton
                     .fontWeight(.light)
                     .font(.title2)
@@ -117,7 +117,7 @@ extension LocationPreviewView {
                 if value.translation.width < -50 {
                     vm.nextButtonPressed()
                 }
-                else if value.translation.width > 50{
+                else if value.translation.width > 50 {
                     vm.previousButtonPressed()
                 }
                     

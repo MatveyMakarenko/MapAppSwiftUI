@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @State private var selectedTab: AppTab = .locations
+    @Environment(LocationsViewModels.self) private var vm: LocationsViewModels
+    @State private var selectedTab: AppTab = .favorites
     @State private var isTabBarCompact = false
     
     var body: some View {
@@ -27,7 +28,7 @@ extension MainTabView {
             }
             
             Tab("", systemImage: "heart", value: .favorites) {
-                FavoritesView()
+                FavoritesView(selectedTab: $selectedTab)
                     .toolbarVisibility(.hidden, for: .tabBar)
             }
             
