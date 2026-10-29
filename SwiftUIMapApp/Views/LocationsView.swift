@@ -3,6 +3,9 @@ import MapKit
 
 struct LocationsView: View {
     @Environment(LocationsViewModels.self) private var vm: LocationsViewModels
+    @State private var isVisible: Bool = true
+    @Binding var isTabBarCompact: Bool
+    
     
     var body: some View {
         @Bindable var vm = vm
@@ -12,6 +15,30 @@ struct LocationsView: View {
                     mapPin(location: location, isSelected: vm.currentLocation == location)
                 }
             }
+            .simultaneousGesture(
+                DragGesture()
+                    .onChanged { _ in
+                        withAnimation(.easeInOut) {
+                            isTabBarCompact = true
+                        }
+                    }
+                    .onEnded { _ in
+                        withAnimation(.easeInOut) {
+                            isTabBarCompact = false
+                        }
+                    }
+            )
+            .onTapGesture {
+                withAnimation {
+                    isVisible = false
+                }
+            }
+            .onTapGesture {
+                withAnimation {
+                    isVisible = false
+                }
+            }
+
             
             VStack(spacing: 0) {
                 header
@@ -19,31 +46,35 @@ struct LocationsView: View {
                     
                 Spacer()
                 
-                LocationPreviewView(location: vm.currentLocation)
-                    .padding()
-                    .shadow(color: Color.black.opacity(0.3), radius: 20)
-                    .id(vm.currentLocation.id)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing),
-                        removal: .move(edge: .leading)
-                    ))
+                if isVisible {
+                    ZStack {
+                        LocationPreviewView(location: vm.currentLocation)
+                            .padding()
+                            .shadow(color: Color.black.opacity(0.3), radius: 20)
+                            .id(vm.currentLocation.id)
+                            .transition(.asymmetric(
+                                insertion: .move(edge: .trailing),
+                                removal: .move(edge: .leading)
+                            
+                            ))
+                            .padding(.bottom, isTabBarCompact ? 10 : 60)
+                    }
+                    .transition(.move(edge: .bottom))
                     .sheet(item: $vm.sheetLocation) { location in
                         LocationLearnMoreView(location: location)
                     }
+                    
+                }
+
             }
         }
     }
 }
 
 #Preview {
-    let vm = LocationsViewModels()
-
-        if let lastLocation = vm.locations.last {
-            vm.updateNextLocation(location: lastLocation)
-        }
-    
-    return LocationsView()
-        .environment(vm)
+    @Previewable @State var isCompete:Bool = false
+    LocationsView(isTabBarCompact: $isCompete)
+        .environment(LocationsViewModels())
 }
 
 extension LocationsView {
@@ -83,9 +114,13 @@ extension LocationsView {
     ) -> some MapContent {
         Annotation("", coordinate: location.coordinates) {
             LocationMapAnnotationView()
-                .scaleEffect(isSelected ? 1.0 : 0.7)
+                .scaleEffect(isSelected && isVisible ? 1.0 : 0.7)
+                .animation(.easeInOut, value: isVisible)
                 .onTapGesture {
-                    vm.updateNextLocation(location: location)
+                    withAnimation {
+                        vm.updateNextLocation(location: location)
+                        isVisible = true
+                    }
                 }
         }
     }

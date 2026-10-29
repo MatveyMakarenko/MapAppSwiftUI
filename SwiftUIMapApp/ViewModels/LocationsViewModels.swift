@@ -3,7 +3,7 @@ import SwiftUI
 import MapKit
 
 @Observable
-class LocationsViewModels {
+final class LocationsViewModels {
     var locations: [Location]
     
     var currentLocation: Location {
@@ -19,12 +19,21 @@ class LocationsViewModels {
     
     var sheetLocation: Location? = nil
     
+    var savedFavoritesIds: [String] = UserDefaults.standard.stringArray(forKey: "saved_favorites") ?? []
+    
     init() {
         let locations = LocationsDataService.locations
+        
         self.locations = locations
         self.currentLocation = locations.first!
+
+        for index in self.locations.indices {
+            let id = self.locations[index].id
+            self.locations[index].isFavorite = savedFavoritesIds.contains(id)
+        }
         
-        self.updateMapRegion(location: locations.first!)
+        self.currentLocation = self.locations.first!
+        self.updateMapRegion(location: currentLocation)
     }
     
     private func updateMapRegion(location: Location) {
@@ -55,13 +64,13 @@ class LocationsViewModels {
         print("Текущий индекс: \(currentIndex)")
         print("Следующий индекс: \(nextIndex)")
         
-            
+        
         updateNextLocation(location: locations[nextIndex])
     }
     
     func previousButtonPressed() {
         guard let currentIndex = locations.firstIndex(where: { $0 == currentLocation }) else { return }
-
+        
         var previousIndex = (currentIndex - 1) % locations.count
         
         if previousIndex < 0 {
@@ -70,7 +79,7 @@ class LocationsViewModels {
         print("Текущий индекс: \(currentIndex)")
         print("Предыдущий индекс: \(previousIndex)")
         
-            
+        
         updateNextLocation(location: locations[previousIndex])
     }
     
@@ -79,8 +88,20 @@ class LocationsViewModels {
             guard let index = locations.firstIndex(where: {
                 $0.id == location.id
             }) else { return }
-
+            
+            if savedFavoritesIds.contains(location.id) {
+                savedFavoritesIds.removeAll {
+                    $0 == location.id
+                }
+            }
+            else {
+                savedFavoritesIds.append(location.id)
+            }
+            
             locations[index].isFavorite.toggle()
             currentLocation = locations[index]
+            
+            UserDefaults.standard.set(savedFavoritesIds, forKey: "saved_favorites")
         }
-    }}
+    }
+}
